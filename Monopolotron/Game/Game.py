@@ -16,8 +16,9 @@ class Game:
 #        self.board = board
 
     def __repr__(self,) -> str:
-        out = np.zeros((settings.board_width, settings.board_height + 2)).astype(str)
+        out = np.zeros((settings.board_width, settings.board_height)).astype(str)
         out[:, :] = '*'
+        out[settings.board_height//2, :] = np.array(list('*MONOPOLY**'))
         out[:, 0] = 'O'; out[:, -1] = 'O'
         out[0, :] = 'O'; out[-1, :] = 'O'
 
@@ -25,27 +26,25 @@ class Game:
             pos = p.position
             rune = p.name[0]
 
-            if pos < settings.board_width - 1:
+            if pos < settings.board_width:
                 print('A')
                 idx = -1, -(pos + 1)
                 continue
 
             if pos < settings.board_width + settings.board_height - 1:
                 print('B')
-                idx = -(pos - settings.board_width), 0
+                idx = -(pos - settings.board_width + 2), 0
                 continue
 
-            if pos < 2*settings.board_width + settings.board_height - 1:
+            if pos < 2*settings.board_width + settings.board_height - 2:
                 print('C')
-                idx = 0, pos - settings.board_width - settings.board_height + 1
+                idx = 0, pos - settings.board_width - settings.board_height + 2
                 continue
 
-            idx = pos - 2*settings.board_width - settings.board_height, -1
+            idx = pos - 2*settings.board_width - settings.board_height + 3, -1
 
-        print(idx)
+        print(idx, pos)
         out[idx[0]][idx[1]] = rune
 
         out[-1][-1] = '@'
         return '\n'.join(' '.join(row) for row in out)
-
-

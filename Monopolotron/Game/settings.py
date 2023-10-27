@@ -1,7 +1,7 @@
 # board size
 board_length: int = 40
-board_width: int = board_length // 4
-board_height: int = board_width - 2
+board_width: int = board_length // 4 + 1
+board_height: int = board_width
 
 
 # starting settings
