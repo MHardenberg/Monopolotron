@@ -4,6 +4,8 @@ from Game import settings
 
 class Player:
     def __init__(self,) -> None:
+        self.name: str
+
         self.money: int
         self.jailed: bool
         self.properties: list = None
@@ -28,7 +30,6 @@ class Player:
             res += sum(roll)
             counter += 1
 
-        
         self.position += res
 
     def update_pos(self, move: int, move_relative: bool=True):
@@ -41,3 +42,8 @@ class Player:
         # loop back
         self.position -= self.position % settings.board_length
 
+    # magic
+    def __repr__(self,) -> str:
+        out = '\n'.join([f'Player: {self.name}',] +
+                        [field for field in dir(self) if not field.startswith('__')])
+        return out
