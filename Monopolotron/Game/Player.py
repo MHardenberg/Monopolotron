@@ -23,7 +23,7 @@ class Player:
         while roll[0] == roll[1]:
             if counter > 2:
                 self.jailed = True
-                self.position = 10 # do better
+                self.position = 10  # do better
                 return
 
             roll = utils.rolld6(), utils.rolld6()
@@ -41,6 +41,7 @@ class Player:
         self.position += move
         # loop back
         self.position -= self.position % settings.board_length
+        # do eval
 
     # magic
     def __repr__(self,) -> str:
