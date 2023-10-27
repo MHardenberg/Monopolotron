@@ -1,13 +1,13 @@
-from Game import utils
-from Game import settings
+from Monopolotron.Game import utils
+from Monopolotron.Game import settings
 
 
 class Player:
     def __init__(self,) -> None:
-        self.name: str
+        self.name: str = ''
 
-        self.money: int
-        self.jailed: bool
+        self.money: int = 0
+        self.jailed: bool = False
         self.properties: list = None
 
         self.position: int = 0
@@ -45,5 +45,5 @@ class Player:
     # magic
     def __repr__(self,) -> str:
         out = '\n'.join([f'Player: {self.name}',] +
-                        [field for field in dir(self) if not field.startswith('__')])
+                        ['\t' + field for field in dir(self) if not field.startswith('__')])
         return out

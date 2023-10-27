@@ -1,4 +1,4 @@
-from Monopolotron.Game import Player
+from Monopolotron.Game.Player import Player
 
 
 if __name__ == "__main__":
