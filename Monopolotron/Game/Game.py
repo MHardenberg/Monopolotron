@@ -1,6 +1,7 @@
 from Monopolotron.Game.Player import Player
 #from Monopolotron.Game.Board import board
 from Monopolotron.Game import settings
+import numpy as np
 
 
 class Game:
@@ -15,33 +16,34 @@ class Game:
 #        self.board = board
 
     def __repr__(self,) -> str:
-        
-        out = settings.board_height * [settings.board_width * ['*']]
-        for row_idx in range(len(out)):
-            if row_idx == 0 or row_idx == settings.board_height - 1:
-                out[row_idx] = ['O'] * settings.board_width
-                continue
-
-            out[row_idx][0] = out[row_idx][-1] = 'O'
+        out = np.zeros((settings.board_width, settings.board_height + 2)).astype(str)
+        out[:, :] = '*'
+        out[:, 0] = 'O'; out[:, -1] = 'O'
+        out[0, :] = 'O'; out[-1, :] = 'O'
 
         for p in self.players:
             pos = p.position
             rune = p.name[0]
-            
-            if pos < settings.board_width:
-                out[-1][-(pos + 1)] = rune
+
+            if pos < settings.board_width - 1:
+                print('A')
+                idx = -1, -(pos + 1)
                 continue
 
-            if pos < settings.board_width + settings.board_height -1:
-                out[-(pos - settings.board_width + 2)][0] = rune
+            if pos < settings.board_width + settings.board_height - 1:
+                print('B')
+                idx = -(pos - settings.board_width), 0
                 continue
 
-            if pos < 2*settings.board_width + settings.board_height -1:
-                out[0][(pos - settings.board_width - settings.board_height +1)]\
-                        = rune
+            if pos < 2*settings.board_width + settings.board_height - 1:
+                print('C')
+                idx = 0, pos - settings.board_width - settings.board_height + 1
                 continue
 
-            out[pos - 2*settings.board_width - settings.board_height][-1] = rune
+            idx = pos - 2*settings.board_width - settings.board_height, -1
+
+        print(idx)
+        out[idx[0]][idx[1]] = rune
 
         out[-1][-1] = '@'
         return '\n'.join(' '.join(row) for row in out)
