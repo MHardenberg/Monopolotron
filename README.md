@@ -1,0 +1,2 @@
+# Monopolotron
+It monopolies
