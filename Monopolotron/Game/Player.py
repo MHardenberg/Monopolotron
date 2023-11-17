@@ -14,11 +14,12 @@ class Player:
 
     def take_turn(self,):
         if self.jailed:
+            # should ahndled jailed condition
             pass
 
-        roll = utils.rolld6(), utils.rolld6()
-        res = sum(roll)
-        counter = 1
+        roll = 0, 0
+        counter = 0
+        res = 0
 
         while roll[0] == roll[1]:
             if counter > 2:
@@ -30,18 +31,24 @@ class Player:
             res += sum(roll)
             counter += 1
 
-        self.position += res
+            self.update_pos(res)
+            self.eval_tile()
 
-    def update_pos(self, move: int, move_relative: bool=True):
+    def update_pos(self, move: int, move_relative: bool = True):
         if not move_relative:
             self.position = move
             # do eval
             return
 
         self.position += move
+
         # loop back
-        self.position -= self.position % settings.board_length
-        # do eval
+        self.position = self.position % settings.board_length
+        print(f'Player {self.name} at ', self.position)
+        self.eval_tile()
+
+    def eval_tile(self):
+        pass
 
     # magic
     def __repr__(self,) -> str:
