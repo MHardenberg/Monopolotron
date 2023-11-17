@@ -16,4 +16,7 @@ class Game:
         self.board_drawer = draw_board_ascii()
 
     def __repr__(self,) -> str:
-        return self.board_drawer.draw(self.players)
+        out = ''
+        for p in self.players:
+            out += p.__repr__() + '\n'
+        return out + self.board_drawer.draw(self.players)

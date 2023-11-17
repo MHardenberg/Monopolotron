@@ -6,8 +6,10 @@ import time
 
 if __name__ == "__main__":
     game = Game(players=2)
-    print(game)
 
+    game.players[0].jailed = True
+    game.players[0].position = 10
+    game.players[0].status = f'Status jailed for {0}'
     for _ in range(settings.board_length):
         print('-'*80 + '\n')
 

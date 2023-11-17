@@ -65,6 +65,8 @@ class draw_board_ascii:
                }
 
     def draw(self, players: list):
+        """ Draws acsii representation of board, indoicating players as {<X},
+            where X isthe first letter in their name."""
         taken = []
         out = copy.deepcopy(self.board_repr)
         for p in players:
