@@ -27,8 +27,8 @@ class Game:
         while self.players and self.turns_played < max_turns:
             if visualise:
                 # print board for debugging
+                time.sleep(2)
                 self.__visualise()
-                time.sleep(1)
 
             for idx, p in enumerate(self.players):
                 self.players[idx].take_turn()
