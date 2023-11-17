@@ -15,7 +15,7 @@ class Player:
         self.status: str = ''
 
     def take_turn(self,):
-        """ If not jailed, roll and evaluate game tile. """
+        """ If not jailed, roll, move and evaluate game tile.. """
         if self.jailed:
             self.__handle_jail()
             return
@@ -26,6 +26,7 @@ class Player:
 
         while roll[0] == roll[1]:
             if counter > 2:
+                # jail if rolling doubles more than twice
                 self.__be_jailed()
                 return
 
