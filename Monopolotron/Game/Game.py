@@ -24,6 +24,9 @@ class Game:
         self.tile_set = utils.load_tile_set()
 
     def play(self, visualise=False, max_turns=50):
+        """ Start game loop until but one players are bankrupt or max turns 
+        are reached.
+        """
         while self.players and self.turns_played < max_turns:
             if visualise:
                 # print board for debugging
@@ -34,11 +37,18 @@ class Game:
                 self.players[idx].take_turn()
                 if p.money <= 0:
                     # remove bankrupt players
-                    print(f'Player: {p.name} bankrupt!')
-                    self.bankrupt_players += [p,]
-                    del self.players[idx]
+                    self.__rem_bankrupt_player(idx, p)
 
             self.turns_played += 1
+
+    def __rem_bankrupt_player(self, bankrupt_players_idx, bankrupt_player):
+        print(f'Player: {bankrupt_player.name} bankrupt!')
+        self.bankrupt_players += [bankrupt_player,]
+        # return player tiles to bank!
+        print('WARINGIG NOT IMPLEMENTED!:' +
+              'player tiles are not returned to bank')
+
+        del self.players[bankrupt_players_idx]
 
     def __visualise(self,):
         os.system('cls' if os.name == 'nt' else 'clear')
