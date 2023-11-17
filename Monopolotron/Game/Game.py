@@ -21,7 +21,7 @@ class Game:
             self.players[i].name = settings.names[i]
 
         # populate tiles
-        self.tile_set = utils.load_tile_set()
+        self.tile_dict: dict = utils.load_tile_set()
 
     def play(self, visualise=False, max_turns=50):
         """ Start game loop until but one players are bankrupt or max turns 

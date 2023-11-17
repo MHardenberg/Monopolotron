@@ -10,6 +10,7 @@ class Player:
         self.jailed: bool = False
         self.jailed_for_turns: int = 0
         self.properties: list = None
+        self.neighbourhoods: list = None
 
         self.position: int = 0
         self.status: str = ''
@@ -82,6 +83,7 @@ class Player:
         self.__eval_tile()
 
     def __eval_tile(self):
+
         pass
 
     # magic
