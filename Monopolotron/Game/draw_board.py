@@ -66,6 +66,7 @@ class draw_board_ascii:
 
     def draw(self, players: list):
         taken = []
+        out = copy.deepcopy(self.board_repr)
         for p in players:
             rune = '<' + p.name[0].upper()
             pos_enc = self.pos_encodings[p.position]
@@ -73,7 +74,6 @@ class draw_board_ascii:
                 rune = '<<'
             taken += [pos_enc]
 
-            out = copy.deepcopy(self.board_repr)
             out[pos_enc[0]][pos_enc[1]] = rune
         out_str = '\n'.join([''.join(row) for row in out])
 

@@ -34,6 +34,8 @@ class Player:
             self.update_pos(res)
             self.eval_tile()
 
+        print(f'{self.name} at {self.position} rolled {counter} times')
+
     def update_pos(self, move: int, move_relative: bool = True):
         if not move_relative:
             self.position = move
@@ -44,7 +46,6 @@ class Player:
 
         # loop back
         self.position = self.position % settings.board_length
-        print(f'Player {self.name} at ', self.position)
         self.eval_tile()
 
     def eval_tile(self):
@@ -53,5 +54,6 @@ class Player:
     # magic
     def __repr__(self,) -> str:
         out = '\n'.join([f'Player: {self.name}',] +
-                        ['\t' + field for field in dir(self) if not field.startswith('__')])
+                        ['\t' + field for field in dir(self)\
+                                if not field.startswith('__')])
         return out
