@@ -22,12 +22,13 @@ class Game:
 
         # populate tiles
         self.tile_dict: dict = utils.load_tile_set()
+        self.neighbourhoods: dict = utils.sum_neighbourhoods(self.tile_dict)
 
     def play(self, visualise=False, max_turns=50):
         """ Start game loop until but one players are bankrupt or max turns 
         are reached.
         """
-        while self.players and self.turns_played < max_turns:
+        while len(self.players)>1 and self.turns_played < max_turns:
             if visualise:
                 # print board for debugging
                 time.sleep(2)
@@ -55,7 +56,7 @@ class Game:
         print(self)
 
     def __repr__(self,) -> str:
-        out = f'Monopolotron on turn: {self.turns_played}\n'
+        out = f'\nMonopolotron on turn: {self.turns_played}\n'
         for p in self.players:
             out += p.__repr__() + '\n'
         return out + self.board_drawer.draw(self.players)

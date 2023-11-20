@@ -15,6 +15,17 @@ def load_tile_set() -> dict:
     return tiles
 
 
+def sum_neighbourhoods(tiles: dict) -> dict:
+    neighbourhoods = {}
+    for tile in tiles.values():
+        street = tile["street"]
+        if street in neighbourhoods:
+            neighbourhoods[street] += 1
+        else:
+            neighbourhoods[street] = 1
+    return neighbourhoods
+
+
 # dice and the like
 def rolld6() -> int:
     return random.randint(1, 7)
