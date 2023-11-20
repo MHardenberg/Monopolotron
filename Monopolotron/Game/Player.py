@@ -85,7 +85,9 @@ class Player:
         self.position += move
 
         # loop back
-        self.position = self.position % settings.board_length
+        if position > settings.board_length:
+            self.money += settings.money_over_go
+            self.position = self.position % settings.board_length
         self.__eval_tile()
 
     def __eval_tile(self):
