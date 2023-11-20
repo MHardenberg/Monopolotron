@@ -2,6 +2,8 @@ from Monopolotron.Game import utils
 from Monopolotron.Game import settings
 from Monopolotron.Game import Game
 import random
+
+
 class Player:
     def __init__(self, ) -> None:
         self.name: str = ''
@@ -10,7 +12,6 @@ class Player:
         self.jailed: bool = False
         self.jailed_for_turns: int = 0
         self.properties: dict = {}
-        #self.neighbourhoods: list = []
 
         self.position: int = 0
         self.status: str = ''
@@ -88,8 +89,8 @@ class Player:
         self.__eval_tile()
 
     def __eval_tile(self):
-        self.tile = self.game.tile_dict[self.position]
-        self.action += f'({self.tile["name"]}) '
+        self.tile = self.game.board[self.position]
+        self.action += f'({self.tile.name}) '
         ops = {
             'road': self.__handle_property,
             'rail': self.__handle_rail,
@@ -102,42 +103,42 @@ class Player:
             'parking': self.__handle_remaining,
             'start': self.__handle_remaining,
         }
-        return ops.get(self.tile["type"])()
+        return ops.get(self.tile.type)()
 
     def __handle_property(self):
-        owner = self.tile["owner"]
+        owner = self.tile.owner
         if not owner:
             self.__decide_buy()
         elif owner != self.name:
-            self.__pay_rent(self.tile["rent"][self.tile["buildings"]])
+            self.__pay_rent(self.tile.rent[self.tile.buildings])
         else:
-            if self.tile["buildings"] <= 4 and self.__street_owned() and self.__street_buildings():
+            if self.tile.buildings <= 4 and self.__street_owned() and self.__street_buildings():
                 self.__decide_build()
             else:
                 self.action += "Already owned. Couldn't build. "
 
     def __handle_utils(self):
-        owner = self.tile["owner"]
+        owner = self.tile.owner
         if not owner:
             self.__decide_buy()
         elif owner != self.name:
             owned = self.__calculate_properties()
             mult = sum((utils.rolld6(), utils.rolld6()))
-            self.__pay_rent(self.tile["rent"][owned] * mult)
+            self.__pay_rent(self.tile.rent[owned] * mult)
         else:
             self.action += "Already owned. "
 
     def __handle_rail(self):
-        owner = self.tile["owner"]
+        owner = self.tile.owner
         if not owner:
             self.__decide_buy()
         elif owner != self.name:
-            self.__pay_rent(self.tile["rent"][self.__calculate_properties()])
+            self.__pay_rent(self.tile.rent[self.__calculate_properties()])
         else:
             self.action += "Already owned. "
 
     def __handle_tax(self):
-        rent = self.tile["rent"][0]
+        rent = self.tile.rent[0]
         self.money -= rent
         self.action += f'Payed {rent} tax. '
 
@@ -149,7 +150,7 @@ class Player:
         To be changed when we have DQN
         """
         buy = random.choice([True, False])
-        if self.money >= self.tile["cost"] and buy and not self.__owned_another_player():
+        if self.money >= self.tile.cost and buy and not self.__owned_another_player():
             self.__buy_property()
         else:
             self.action += f'Property not bought. '
@@ -158,16 +159,15 @@ class Player:
         ''' For debugging, to assure players eventually buy whole street and can build.
         '''
         for idx, player in enumerate(self.game.players):
-            if player != self and self.tile["street"] in player.properties.keys():
+            if player != self and self.tile.street in player.properties.keys():
                 return True
         return False
 
-
     def __buy_property(self):
-        cost = self.tile['cost']
-        street = self.tile["street"]
+        cost = self.tile.cost
+        street = self.tile.street
         self.money -= cost
-        self.tile['owner'] = self.name
+        self.tile.owner = self.name
         if street not in self.properties:
             self.properties[street] = [self.tile]
         else:
@@ -177,38 +177,48 @@ class Player:
     def __decide_build(self):
         """Handle buying building, currently always build when enough money
         """
-        price = self.tile["cost_hotel"] if self.tile["buildings"] == 4 else self.tile["cost_house"]
+        price = self.tile.cost_hotel if self.tile.buildings == 4 else self.tile.cost_house
         if self.money >= price:
-            self.tile["buildings"] += 1
+            self.tile.buildings += 1
             self.money -= price
-            self.action += f'Build! Currently {self.tile["buildings"]} on this property. '
+            self.action += f'Build! Currently {self.tile.buildings} on this property. '
 
     def __pay_rent(self, rent):
-        idx = next(idx for idx, player in enumerate(self.game.players) if player.name == self.tile["owner"])
+        idx = next(idx for idx, player in enumerate(self.game.players) if player.name == self.tile.owner)
         self.game.players[idx].money += rent
         self.money -= rent
         self.action += f'Payed {rent} rent. '
 
     def __calculate_properties(self) -> int:
-        idx = next(idx for idx, player in enumerate(self.game.players) if player.name == self.tile["owner"])
-        result = len(self.game.players[idx].properties[self.tile["street"]])-1
+        idx = next(idx for idx, player in enumerate(self.game.players) if player.name == self.tile.owner)
+        result = len(self.game.players[idx].properties[self.tile.street]) - 1
         return result
 
-
     def __street_owned(self) -> bool:
-        street = self.tile["street"]
+        street = self.tile.street
         return True if self.game.neighbourhoods[street] == len(self.properties[street]) else False
 
     def __street_buildings(self) -> bool:
-        street = self.tile["street"]
+        street = self.tile.street
         for prop in self.properties[street]:
-            if self.tile["buildings"] > prop["buildings"]:
+            if self.tile.buildings > prop.buildings:
                 return False
         return True
+
+    def __print_properties(self) -> dict:
+        properties = {}
+        for key in self.properties.keys():
+            for el in self.properties[key]:
+                string = el.name + ':' + str(el.buildings)
+                if key in properties.keys():
+                    properties[key].append(string)
+                else:
+                    properties[key] = [string]
+        return properties
 
     # magic
     def __repr__(self, ) -> str:
         out = f'Player: {self.name}\n\t' + self.status + f'\n\tAction: {self.action}' + f'\n\tBudget: {self.money}' + \
-              f'\n\tProperties: {self.properties}'
+              f'\n\tProperties: {self.__print_properties()}'
         self.action = ''
         return out

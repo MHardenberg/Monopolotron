@@ -21,10 +21,11 @@ class Game:
             self.players[i].name = settings.names[i]
 
         # populate tiles
-        self.tile_dict: dict = utils.load_tile_set()
-        self.neighbourhoods: dict = utils.sum_neighbourhoods(self.tile_dict)
+        # self.tile_dict: dict = utils.load_tile_set()
+        self.board: dict = utils.load_board()
+        self.neighbourhoods: dict = utils.sum_neighbourhoods(self.board)
 
-    def play(self, visualise=False, max_turns=50):
+    def play(self, visualise=False, max_turns=200):
         """ Start game loop until but one players are bankrupt or max turns 
         are reached.
         """
