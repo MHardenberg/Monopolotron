@@ -12,7 +12,7 @@ class Game:
         self.board_drawer = draw_board_ascii()
 
         # populate players
-        self.players: list = [Player() for _ in range(players)]
+        self.players: list = [Player(game=self) for _ in range(players)]
         self.bankrupt_players: list = []
 
         # set starting money and pow
@@ -25,14 +25,14 @@ class Game:
         self.board: dict = utils.load_board()
         self.neighbourhoods: dict = utils.sum_neighbourhoods(self.board)
 
-    def play(self, visualise=False, max_turns=200):
+    def play(self, visualise=False, max_turns=200, speed_factor=1):
         """ Start game loop until but one players are bankrupt or max turns 
         are reached.
         """
         while len(self.players)>1 and self.turns_played < max_turns:
             if visualise:
                 # print board for debugging
-                time.sleep(2)
+                time.sleep(2/speed_factor)
                 self.__visualise()
 
             for idx, p in enumerate(self.players):

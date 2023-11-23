@@ -10,5 +10,5 @@ if __name__ == "__main__":
     game.players[0].game = game
     game.players[1].game = game
 
-    game.play(visualise=True)
+    game.play(visualise=True, speed_factor=1000)
 
