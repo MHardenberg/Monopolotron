@@ -2,24 +2,14 @@ from Monopolotron.Game import Game
 from Monopolotron.Game import Player
 from Monopolotron.Game.Actors.RndActor import RndActor
 from Monopolotron.Game import settings
+from Monopolotron.Model.GameEncoder import GameEncoder
 import numpy as np
 
 
 class NetActor(RndActor):
     def __init__(self, player: Player, game: Game):
         super().__init__(player=player, game=game)
-        self.street_enc = {
-            'Brown': 1,
-            'Light Blue': 2,
-            'Pink': 3,
-            'Orange': 4,
-            'Red': 5,
-            'Yellow': 6,
-            'Green': 7,
-            'Blue': 8,
-            'rail': 9,
-            'utilities': 10
-            }
+        self.encoder = GameEncoder()
 
     def decide_build(self, player: Player):
         """Handle buying buildings
@@ -67,22 +57,6 @@ class NetActor(RndActor):
                 print(f'Invalid input: {ans} - retry...')
 
     def __gather_inf(self) -> str:
-        game_inf = [self.game.turns_played,]
-        tile_inf = [
-                self.player.tile.number,
-                self.__encode_street(self.player.tile.street),
-                self.player.tile.cost,
-                ]
-        player_inf = [
-                self.player.money,
-                self.player.calculate_properties(),
-                ]
-
-        out = np.array(game_inf + tile_inf + player_inf)
-        print('Model in:', out)
-        return out
-
-    def __encode_street(self, street) -> int:
-        if not street:
-            return 0
-        return self.street_enc[street]
+        enc_game = self.encoder.encode_game(game=self.game, player=self.player)
+        print(enc_game)
+        return enc_game

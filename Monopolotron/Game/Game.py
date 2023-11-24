@@ -16,6 +16,7 @@ class Game:
 
         # populate players
         players = humans + cpu + rnd_cpu
+        self.original_player_num: int = players
         self.players: list = [Player(game=self, actor=HumanActor)
                               for _ in range(humans)]
         self.players += [Player(game=self, actor=NetActor) for _ in range(cpu)]
