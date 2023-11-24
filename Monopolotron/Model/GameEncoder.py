@@ -19,7 +19,7 @@ class GameEncoder:
 
     def encode_game(self, game, player):
         board = game.board
-        out = np.zeros(160 + 2*4)
+        out = np.zeros(161 + 2*4)
         counter = 0
 
         for tile_key in board:
@@ -43,5 +43,6 @@ class GameEncoder:
             out[counter:counter+2] = to_add
             counter += 2
 
+        out[-1] = game.turns_played
         out = torch.FloatTensor(out)
         return out
