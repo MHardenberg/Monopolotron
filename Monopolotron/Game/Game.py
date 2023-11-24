@@ -41,14 +41,15 @@ class Game:
                 # print board for debugging
                 time.sleep(2/speed_factor)
                 self.__visualise()
+                self.__play_turn()
+                self.turns_played += 1
 
-            for idx, p in enumerate(self.players):
-                self.players[idx].take_turn()
-                if p.money <= 0:
-                    # remove bankrupt players
-                    self.__rem_bankrupt_player(idx, p)
-
-            self.turns_played += 1
+    def __play_turn(self,):
+        for idx, p in enumerate(self.players):
+            self.players[idx].take_turn()
+            if p.money <= 0:
+                # remove bankrupt players
+                self.__rem_bankrupt_player(idx, p)
 
     def __rem_bankrupt_player(self, bankrupt_players_idx, bankrupt_player):
         print(f'Player: {bankrupt_player.name} bankrupt!')

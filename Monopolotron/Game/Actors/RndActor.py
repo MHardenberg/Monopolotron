@@ -8,16 +8,16 @@ class RndActor:
         self.player: Player = player
         self.game: Game = game
 
-    def decide_build(self, player: Player): 
+    def decide_build(self): 
         """Handle buying building, always builds when enough money
         """
-        price = player.tile.cost_hotel if player.tile.buildings == 4 \
-                else player.tile.cost_house
-        if player.money >= price:
-            player.tile.buildings += 1
-            player.money -= price
-            player.action += \
-                    f'Build! Currently {player.tile.buildings} on this property.'
+        price = self.player.tile.cost_hotel if self.player.tile.buildings == 4\
+            else self.player.tile.cost_house
+        if self.player.money >= price:
+            self.player.tile.buildings += 1
+            self.player.money -= price
+            self.player.action += \
+                    f'Build! Currently {self.player.tile.buildings} on this property.'
 
     def decide_buy(self,):
         """Handle buying properties.
@@ -35,7 +35,7 @@ class RndActor:
         '''
         for idx, player in enumerate(self.game.players):
             if player != self.player and self.player.tile.street in \
-                    self.player.properties.keys():
+                    player.properties.keys():
                 return True
         return False
 

@@ -61,7 +61,7 @@ class HumanActor(RndActor):
                 ]
         player_inf = [
                 f'Funds: {self.player.money}',
-                f'Owned prop.: {self.player.calculate_properties()}',
+                f'Owned prop. on that street: {self.player.calculate_properties()}',
                 ]
 
         return '\n'.join(tile_inf + player_inf)

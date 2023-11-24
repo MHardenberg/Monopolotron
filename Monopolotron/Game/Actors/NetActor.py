@@ -20,7 +20,7 @@ class NetActor(RndActor):
             'go-jail': 9,
                 }
 
-        self.colour_enc = {
+        self.street_enc = {
             'Brown': 1,
             'Light Blue': 2,
             'Pink': 3,
@@ -28,13 +28,15 @@ class NetActor(RndActor):
             'Red': 5,
             'Yellow': 6,
             'Green': 7,
-            'Blue': 8
+            'Blue': 8,
+            'rail': 9,
+            'utilities': 10
             }
 
     def decide_build(self, player: Player):
         """Handle buying buildings
         """
-        print('Not implemented - actiing as human')
+        print('Not implemented - acting as human')
         price = player.tile.cost_hotel if player.tile.buildings == 4 \
             else player.tile.cost_house
         if player.money < price:
@@ -53,7 +55,7 @@ class NetActor(RndActor):
     def decide_buy(self,):
         """Handle buying properties.
         """
-        print('Not implemented - actiing as human')
+        print('Not implemented - acting as human')
         if self.player.money < self.player.tile.cost:
             self.player.action += 'Property not bought. '
             print(f'Player {self.player.name} cannot afford to build on this tile.')
@@ -77,9 +79,10 @@ class NetActor(RndActor):
                 print(f'Invalid input: {ans} - retry...')
 
     def __gather_inf(self) -> str:
+        game_inf = [self.game.turns_played,]
         tile_inf = [
                 self.player.tile.number,
-                self.__encode_colour(self.player.tile.street),
+                self.__encode_street(self.player.tile.street),
                 self.__encode_type(self.player.tile.type),
                 self.player.tile.cost,
                 ]
@@ -88,14 +91,14 @@ class NetActor(RndActor):
                 self.player.calculate_properties(),
                 ]
 
-        out = np.array(tile_inf + player_inf)
+        out = np.array(game_inf + tile_inf + player_inf)
         print('Model in:', out)
         return out
 
-    def __encode_colour(self, colour) -> int:
-        if not colour:
+    def __encode_street(self, street) -> int:
+        if not street:
             return 0
-        return self.colour_enc[colour]
+        return self.street_enc[street]
 
     def __encode_type(self, type) -> int:
         if not type:

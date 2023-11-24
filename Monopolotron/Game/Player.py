@@ -6,7 +6,7 @@ import random
 
 
 class Player:
-    def __init__(self, game: Game,actor=RndActor) -> None:
+    def __init__(self, game: Game, actor=RndActor) -> None:
         """
         Initialize a new Player instance.
 
@@ -66,7 +66,10 @@ class Player:
         self.action += f'Bought property for {cost}. '
 
     def calculate_properties(self) -> int:
-        return len(self.properties)
+        try:
+            return len(self.properties[self.tile.street])
+        except KeyError:
+            return 0
 
     def street_owned(self) -> bool:
         """
@@ -159,6 +162,7 @@ class Player:
         if owner == self.name:
             if self.tile.buildings <= 4 and self.street_owned() \
                     and self.__street_buildings():
+
                 self.__decide_build()
 
     def __handle_utils(self):
