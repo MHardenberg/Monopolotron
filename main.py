@@ -7,4 +7,4 @@ if __name__ == "__main__":
     for i, _ in enumerate(game.players):
         game.players[i].game = game
 
-    game.play(visualise=True, speed_factor=100)
+    game.play(visualise=True, speed_factor=1000)

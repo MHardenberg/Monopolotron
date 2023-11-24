@@ -8,18 +8,6 @@ import numpy as np
 class NetActor(RndActor):
     def __init__(self, player: Player, game: Game):
         super().__init__(player=player, game=game)
-        self.type_enc = {
-            'road': 1,
-            'chest': 2,
-            'tax': 3,
-            'rail': 4,
-            'chance': 5,
-            'jail': 6,
-            'utilities': 7,
-            'parking': 8,
-            'go-jail': 9,
-                }
-
         self.street_enc = {
             'Brown': 1,
             'Light Blue': 2,
@@ -83,7 +71,6 @@ class NetActor(RndActor):
         tile_inf = [
                 self.player.tile.number,
                 self.__encode_street(self.player.tile.street),
-                self.__encode_type(self.player.tile.type),
                 self.player.tile.cost,
                 ]
         player_inf = [
@@ -99,8 +86,3 @@ class NetActor(RndActor):
         if not street:
             return 0
         return self.street_enc[street]
-
-    def __encode_type(self, type) -> int:
-        if not type:
-            return 0
-        return self.type_enc[type]

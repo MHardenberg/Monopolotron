@@ -55,7 +55,7 @@ class Game:
         print(f'Player: {bankrupt_player.name} bankrupt!')
         self.bankrupt_players += [bankrupt_player,]
         # return player tiles to bank!
-        print('WARNGIG NOT IMPLEMENTED!:' +
+        print('WARNING NOT IMPLEMENTED!:' +
               'player tiles are not returned to bank')
 
         del self.players[bankrupt_players_idx]
