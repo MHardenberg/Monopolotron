@@ -12,3 +12,8 @@ names = ['Harold', "Gavin A'Laugh", 'Willy Wonka', 'Steve']
 
 # game constants
 JAIL_POSITION = 10
+
+
+# prompts
+build_prompt = 'Do you want to build the next building on this tile?'
+buy_prompt = 'Do you want to buy this tile?'

@@ -1,4 +1,7 @@
 from Monopolotron.Game.Player import Player
+from Monopolotron.Game.Actors.HumanActor import HumanActor
+from Monopolotron.Game.Actors.RndActor import RndActor
+from Monopolotron.Game.Actors.NetActor import NetActor
 from Monopolotron.Game import settings
 from Monopolotron.Game.draw_board import draw_board_ascii
 from Monopolotron.Game import utils
@@ -7,12 +10,16 @@ import time
 
 
 class Game:
-    def __init__(self, players: int = 2) -> None:
+    def __init__(self, humans: int = 0, cpu=0, rnd_cpu: int = 2) -> None:
         self.turns_played: int = 0
         self.board_drawer = draw_board_ascii()
 
         # populate players
-        self.players: list = [Player(game=self) for _ in range(players)]
+        players = humans + cpu + rnd_cpu
+        self.players: list = [Player(game=self, actor=HumanActor)
+                              for _ in range(humans)]
+        self.players += [Player(game=self, actor=NetActor) for _ in range(cpu)]
+        self.players += [Player(game=self, actor=RndActor) for _ in range(rnd_cpu)]
         self.bankrupt_players: list = []
 
         # set starting money and pow
@@ -26,10 +33,10 @@ class Game:
         self.neighbourhoods: dict = utils.sum_neighbourhoods(self.board)
 
     def play(self, visualise=False, max_turns=200, speed_factor=1):
-        """ Start game loop until but one players are bankrupt or max turns 
+        """ Start game loop until but one players are bankrupt or max turns
         are reached.
         """
-        while len(self.players)>1 and self.turns_played < max_turns:
+        while len(self.players) > 1 and self.turns_played < max_turns:
             if visualise:
                 # print board for debugging
                 time.sleep(2/speed_factor)
@@ -47,7 +54,7 @@ class Game:
         print(f'Player: {bankrupt_player.name} bankrupt!')
         self.bankrupt_players += [bankrupt_player,]
         # return player tiles to bank!
-        print('WARINGIG NOT IMPLEMENTED!:' +
+        print('WARNGIG NOT IMPLEMENTED!:' +
               'player tiles are not returned to bank')
 
         del self.players[bankrupt_players_idx]

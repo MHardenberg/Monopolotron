@@ -65,6 +65,20 @@ class Player:
             self.properties[street].append(self.tile)
         self.action += f'Bought property for {cost}. '
 
+    def calculate_properties(self) -> int:
+        return len(self.properties)
+
+    def street_owned(self) -> bool:
+        """
+        Check if the player owns an entire street.
+
+        Returns:
+        True if the player owns the entire street, False otherwise.
+        """
+        street = self.tile.street
+        return self.game.neighbourhoods[street] \
+            == len(self.properties[street])
+
     # Private methods
     def __be_jailed(self, ):
         print(f"{self.name} jailed!")
@@ -138,21 +152,21 @@ class Player:
         owner = self.tile.owner
         if not owner:
             self.__decide_buy()
-        elif owner != self.name:
+            return
+        if owner != self.name:
             self.__pay_rent(self.tile.rent[self.tile.buildings])
-        else:
-            if self.tile.buildings <= 4 and self.__street_owned() \
+            return
+        if owner == self.name:
+            if self.tile.buildings <= 4 and self.street_owned() \
                     and self.__street_buildings():
                 self.__decide_build()
-            else:
-                self.action += "Already owned. Couldn't build. "
 
     def __handle_utils(self):
         owner = self.tile.owner
         if not owner:
             self.__decide_buy()
         elif owner != self.name:
-            owned = self.__calculate_properties()
+            owned = self.calculate_properties()
             mult = sum((utils.rolld6(), utils.rolld6()))
             self.__pay_rent(self.tile.rent[owned] * mult)
         else:
@@ -163,7 +177,7 @@ class Player:
         if not owner:
             self.__decide_buy()
         elif owner != self.name:
-            self.__pay_rent(self.tile.rent[self.__calculate_properties()])
+            self.__pay_rent(self.tile.rent[self.calculate_properties()])
         else:
             self.action += "Already owned. "
 
@@ -200,26 +214,6 @@ class Player:
                     properties[key] = [string]
         return properties
 
-    def __calculate_properties(self) -> int:
-        try:
-            idx = next(idx for idx, player in enumerate(self.game.players)\
-                    if self.name == self.tile.owner)
-            result = len(self.game.players[idx].properties[self.tile.street]) - 1
-        except StopIteration:
-            result = 0
-        return result
-
-    def __street_owned(self) -> bool:
-        """
-        Check if the player owns an entire street.
-
-        Returns:
-        True if the player owns the entire street, False otherwise.
-        """
-        street = self.tile.street
-        return self.game.neighbourhoods[street] \
-                == len(self.properties[street])
-
     def __street_buildings(self) -> bool:
         street = self.tile.street
         for prop in self.properties[street]:
@@ -235,7 +229,8 @@ class Player:
 
 # magic
     def __repr__(self, ) -> str:
-        out = f'Player: {self.name}\n\t' + self.status + f'\n\tAction: {self.action}' + f'\n\tBudget: {self.money}' + \
-              f'\n\tProperties: {self.__print_properties()}'
+        out = f'Player: {self.name}\n\t' + self.status + \
+            f'\n\tAction: {self.action}' + f'\n\tBudget: {self.money}' + \
+            f'\n\tProperties: {self.__print_properties()}'
         self.action = ''
         return out

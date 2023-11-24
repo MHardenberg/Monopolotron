@@ -24,12 +24,12 @@ class RndActor:
         """
         buy = random.choice([True, False])
         if self.player.money >= self.player.tile.cost \
-                and buy and not self.__owned_another_player():
+                and buy and not self._owned_another_player():
             self.player.buy_property()
         else:
             self.player.action += f'Property not bought. '
 
-    def __owned_another_player(self) -> bool:
+    def _owned_another_player(self) -> bool:
         ''' For debugging, to assure players eventually 
         buy whole street and can build.
         '''
