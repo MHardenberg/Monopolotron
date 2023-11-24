@@ -8,3 +8,5 @@ batch_size = 200
 target_update = 10
 learning_rate = 0.001
 state_size = 5 # placeholder, will depend on vectorized game state
+
+max_turns = 2000

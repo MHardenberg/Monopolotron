@@ -30,7 +30,7 @@ class DQNAgent():
             with torch.no_grad():
                 return self.policy_model(state).max(1).indices
         else:
-            return random.randint(0, 1)
+            return random.randint(0, 1) # may need ot be changed
 
     def __replay(self):
         batch = self.memory.sample()
