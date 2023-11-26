@@ -7,6 +7,6 @@ gamma = 0.9
 batch_size = 200
 target_update = 10
 learning_rate = 0.001
-state_size = 5 # placeholder, will depend on vectorized game state
+state_size = 168
 
 max_turns = 2000
