@@ -31,17 +31,34 @@ class DQNAgent():
             self.epsilon = self.epsilon * \
                 math.exp(-1. * self.steps * settings.epsilon_decay)
 
-    def act(self, state) -> int:
+    def act(self, state:torch.Tensor, done: bool) -> int:
         self.__update_epsilon()
         self.steps += 1
         choice = random.random()
         if choice > self.epsilon:
             with torch.no_grad():
-                return self.policy_model(state).max(1).indices
+                action = self.policy_model(state).max(1).indices
         else:
-            return random.randint(0, 1)  # may need ot be changed
+            action = random.randint(0, 1)  # may need ot be changed
+
+        reward = self.__eval_reward(state)
+        self.__store_experience(state, action, reward, done)
+        return action
+
+    def __eval_reward(state) -> float:
+        assert False,  AssertionError('Not implemented')
+
+    def __store_experience(self, state, action, reward, next_state, done):
+        self.memory.push(state, action, reward, next_state, done)
+
+        # Call replay periodically
+        if self.steps % settings.replay_frequency == 0:
+            self.__replay()
 
     def __replay(self):
+        if len(self.memory) < settings.batch_size:
+            return
+
         batch = self.memory.sample()
         # can change to do whole batch at once later on
         for state, action, reward, next_state, done in batch:
@@ -61,3 +78,9 @@ class DQNAgent():
             torch.nn.utils.clip_grad_value_(self.policy_model.parameters(),
                                             100)
             self.optim.step()
+
+            # Update target network every C steps
+            self.target_update_counter += 1
+            if self.target_update_counter % settings.target_update_freq == 0:
+                self.target_model.load_state_dict(
+                        self.policy_model.state_dict())

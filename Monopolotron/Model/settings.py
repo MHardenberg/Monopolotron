@@ -8,5 +8,5 @@ batch_size = 200
 target_update = 10
 learning_rate = 0.001
 state_size = 168
-
+target_update_freq = 10
 max_turns = 2000
