@@ -6,7 +6,8 @@ import random
 
 
 class Player:
-    def __init__(self, game: Game, actor=RndActor) -> None:
+    def __init__(self, game: Game, player_number: int,
+                 actor=RndActor,) -> None:
         """
         Initialize a new Player instance.
 
@@ -15,7 +16,7 @@ class Player:
         - actor: An actor instance responsible for decision-making.
         """
         self.name: str = ''
-
+        self.player_number: int = player_number
         self.money: int = 0
         self.jailed: bool = False
         self.jailed_for_turns: int = 0

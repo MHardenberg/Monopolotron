@@ -12,7 +12,7 @@ train_model(visualise: bool=False, sleep_ms: float=0):
         for idx, _ in enumerate(game.players):
 
             game.players[idx].game = game
-            while len(game.players) > 1 and game.turns_played < max_turns:
+            while not game.finished:
                 if sleep_ms:
                     time.sleep(0.001 * sleep_ms)
                 if visualise:
@@ -20,5 +20,11 @@ train_model(visualise: bool=False, sleep_ms: float=0):
 
                 game.play_turn()
                 game.turns_played += 1
+
+                done = game.finished
+                for idx, _ in enumerate(game.players):
+                    dqn.learn()
+
+
 
 if __name__ == "__main__":

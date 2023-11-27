@@ -17,11 +17,20 @@ class Game:
 
         # populate players
         players = humans + cpu + rnd_cpu
+        assigned_players = 0
         self.original_player_num: int = players
-        self.players: list = [Player(game=self, actor=HumanActor)
-                              for _ in range(humans)]
-        self.players += [Player(game=self, actor=NetActor) for _ in range(cpu)]
-        self.players += [Player(game=self, actor=RndActor) for _ in range(rnd_cpu)]
+        self.players: list = [Player(game=self, 
+                                     player_number=assigned_players + i,
+                                     actor=HumanActor) for i in range(humans)]
+        assigned_players += humans
+        self.players += [Player(game=self,
+                                player_number=assigned_players + i,
+                                actor=NetActor) for i in range(cpu)]
+
+        assigned_players += cpu
+        self.players += [Player(game=self, player_number=assigned_players +i,
+                                actor=RndActor) for i in range(rnd_cpu)]
+
         self.bankrupt_players: list = []
 
         # set starting money and pow

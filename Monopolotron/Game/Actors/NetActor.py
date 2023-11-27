@@ -13,7 +13,6 @@ class NetActor(RndActor, model_state_dict: dict=False):
         super().__init__(player=player, game=game)
         self.encoder = GameEncoder()
         
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = DQNAgent()
         if model_state_dict:
             self.model.load_state_dict(model_state_dict)
@@ -21,7 +20,7 @@ class NetActor(RndActor, model_state_dict: dict=False):
         self.model.to(self.device)
         self.model.eval()
         self.state = torch.zeros(model_settings.state_size)
-        self.state.to(self.device)
+        self.state_action_dict: dict = {}
 
     def decide_build(self, player: Player):
         """Handle buying buildings
@@ -59,7 +58,15 @@ class NetActor(RndActor, model_state_dict: dict=False):
 
     def __get_model_out(self, prompt: str) -> bool:
         state = self.__gather_inf()
-        return bool(self.model.act(self.state))
+        action bool(self.model.act(self.state))
+
+        # save to state action dict
+        try:
+            self.state_action_dict{self.player.player_number} += [(state, action),]
+        except KeyError:
+            self.state_action_dict{self.player.player_number} = [(state, action),]
+
+        return action
 
     def __gather_inf(self) -> str:
         enc_game = self.encoder.encode_game(game=self.game, player=self.player)
