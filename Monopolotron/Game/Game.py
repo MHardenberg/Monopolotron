@@ -12,6 +12,7 @@ import time
 class Game:
     def __init__(self, humans: int = 0, cpu=0, rnd_cpu: int = 2) -> None:
         self.turns_played: int = 0
+        self.finished: bool = False
         self.board_drawer = draw_board_ascii()
 
         # populate players
@@ -37,7 +38,7 @@ class Game:
         """ Start game loop until but one players are bankrupt or max turns
         are reached.
         """
-        while len(self.players) > 1 and self.turns_played < max_turns:
+        while not self.finished and self.turns_played < max_turns:
             if visualise:
                 # print board for debugging
                 time.sleep(2/speed_factor)
@@ -45,12 +46,16 @@ class Game:
                 self.__play_turn()
                 self.turns_played += 1
 
+        game.finished = True
+
     def __play_turn(self,):
         for idx, p in enumerate(self.players):
             self.players[idx].take_turn()
             if p.money <= 0:
                 # remove bankrupt players
                 self.__rem_bankrupt_player(idx, p)
+                if len(self.players) < 2:
+                    self.finished = True
 
     def __rem_bankrupt_player(self, bankrupt_players_idx, bankrupt_player):
         print(f'Player: {bankrupt_player.name} bankrupt!')

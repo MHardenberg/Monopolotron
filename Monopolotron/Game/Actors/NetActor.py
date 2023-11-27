@@ -1,20 +1,31 @@
 from Monopolotron.Game import Game
 from Monopolotron.Game import Player
 from Monopolotron.Game.Actors.RndActor import RndActor
-from Monopolotron.Game import settings
+from Monopolotron.Game import settings as game_settigns
+from Monopolotron.Model import settings as model_settings
 from Monopolotron.Model.GameEncoder import GameEncoder
-import numpy as np
+from Monopolotron.Model.DQNAgent import DQNAgent
+import torch
 
 
-class NetActor(RndActor):
+class NetActor(RndActor, model_state_dict: dict=False):
     def __init__(self, player: Player, game: Game):
         super().__init__(player=player, game=game)
         self.encoder = GameEncoder()
+        
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model = DQNAgent()
+        if model_state_dict:
+            self.model.load_state_dict(model_state_dict)
+        
+        self.model.to(self.device)
+        self.model.eval()
+        self.state = torch.zeros(model_settings.state_size)
+        self.state.to(self.device)
 
     def decide_build(self, player: Player):
         """Handle buying buildings
         """
-        print('Not implemented - acting as human')
         price = player.tile.cost_hotel if player.tile.buildings == 4 \
             else player.tile.cost_house
         if player.money < price:
@@ -33,7 +44,6 @@ class NetActor(RndActor):
     def decide_buy(self,):
         """Handle buying properties.
         """
-        print('Not implemented - acting as human')
         if self.player.money < self.player.tile.cost:
             self.player.action += 'Property not bought. '
             print(f'Player {self.player.name} cannot afford to build on this tile.')
@@ -48,13 +58,8 @@ class NetActor(RndActor):
             self.player.action += 'Property not bought.'
 
     def __get_model_out(self, prompt: str) -> bool:
-        print(self.__gather_inf())
-        while True:
-            ans = input(f'{prompt} [y/n]$ ')
-            try:
-                return {'y': True, 'n': False}[ans.lower()]
-            except KeyError:
-                print(f'Invalid input: {ans} - retry...')
+        state = self.__gather_inf()
+        return bool(self.model.act(self.state))
 
     def __gather_inf(self) -> str:
         enc_game = self.encoder.encode_game(game=self.game, player=self.player)

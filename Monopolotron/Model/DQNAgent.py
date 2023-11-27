@@ -31,19 +31,29 @@ class DQNAgent():
             self.epsilon = self.epsilon * \
                 math.exp(-1. * self.steps * settings.epsilon_decay)
 
-    def act(self, state:torch.Tensor, done: bool) -> int:
-        self.__update_epsilon()
-        self.steps += 1
+    def act(self, state:torch.Tensor) -> int:
+        """ This function only takes decisions. It is supposed to be called 
+        seperately from the .learn() method, when a decision has to be taken.
+        This seperation has been done,
+        as the full state (incl. done) is only known after all actors 
+        finish their turn.
+        """
+
         choice = random.random()
         if choice > self.epsilon:
             with torch.no_grad():
-                action = self.policy_model(state).max(1).indices
-        else:
-            action = random.randint(0, 1)  # may need ot be changed
+                return self.policy_model(state).max(1).indices
+        return random.randint(0, 1)  # may need ot be changed
 
+    def learn(self, action: int, state:torch.Tensor, done: bool) -> None:
+        """ This function takes care of learning after action was taken. It is 
+        supposed to be called at the end of a full round.
+        """
         reward = self.__eval_reward(state)
         self.__store_experience(state, action, reward, done)
-        return action
+
+        self.__update_epsilon()
+        self.steps += 1
 
     def __eval_reward(state) -> float:
         assert False,  AssertionError('Not implemented')
