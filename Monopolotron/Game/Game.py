@@ -10,7 +10,7 @@ import time
 
 
 class Game:
-    def __init__(self, humans: int = 0, cpu=0, rnd_cpu: int = 2) -> None:
+    def __init__(self, humans: int = 0, cpu=0, rnd_cpu: int = 2, **kwargs) -> None:
         self.turns_played: int = 0
         self.finished: bool = False
         self.board_drawer = draw_board_ascii()
@@ -28,6 +28,13 @@ class Game:
                                 actor=NetActor) for i in range(cpu)]
 
         assigned_players += cpu
+        if 'dqn_model_instance' in kwargs:
+            dqn_model_instance = kwargs['dqn_model_instance']
+            self.players += [Player(game=self, player_number=assigned_players +i,
+                                    actor=NetActor,
+                                    dqn_model_instance=dqn_model_instance)
+                             for i in range(cpu)]
+
         self.players += [Player(game=self, player_number=assigned_players +i,
                                 actor=RndActor) for i in range(rnd_cpu)]
 

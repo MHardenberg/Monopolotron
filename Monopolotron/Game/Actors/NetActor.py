@@ -8,19 +8,21 @@ from Monopolotron.Model.DQNAgent import DQNAgent
 import torch
 
 
-class NetActor(RndActor, model_state_dict: dict=False):
+class NetActor(RndActor, model_state_dict: dict=False, dqn_model_instance: None):
     def __init__(self, player: Player, game: Game):
         super().__init__(player=player, game=game)
         self.encoder = GameEncoder()
         
-        self.model = DQNAgent()
+        if dqn_model_instance:
+            self.model = dqn_model_instance
+        else:          
+            self.model = DQNAgent()
+
         if model_state_dict:
             self.model.load_state_dict(model_state_dict)
         
         self.model.to(self.device)
         self.model.eval()
-        self.state = torch.zeros(model_settings.state_size)
-        self.state_action_dict: dict = {}
 
     def decide_build(self, player: Player):
         """Handle buying buildings
@@ -58,13 +60,13 @@ class NetActor(RndActor, model_state_dict: dict=False):
 
     def __get_model_out(self, prompt: str) -> bool:
         state = self.__gather_inf()
-        action bool(self.model.act(self.state))
+        action bool(self.model.act(state))
 
         # save to state action dict
         try:
-            self.state_action_dict{self.player.player_number} += [(state, action),]
+            self.model.state_action_dict{self.player.player_number} += [(state, action),]
         except KeyError:
-            self.state_action_dict{self.player.player_number} = [(state, action),]
+            self.model..state_action_dict{self.player.player_number} = [(state, action),]
 
         return action
 

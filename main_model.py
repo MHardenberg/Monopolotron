@@ -8,7 +8,7 @@ train_model(visualise: bool=False, sleep_ms: float=0):
     dqn = DQNAgent()
 
     for epoch in range(1, epochs):
-        game = Game(humans=0, cpu=2, rnd_cpu=0)
+        game = Game(humans=0, cpu=2, rnd_cpu=0, dqn_model_instance=dqn)
         for idx, _ in enumerate(game.players):
 
             game.players[idx].game = game
@@ -23,7 +23,11 @@ train_model(visualise: bool=False, sleep_ms: float=0):
 
                 done = game.finished
                 for idx, _ in enumerate(game.players):
-                    dqn.learn()
+                    state_action_list = state_action_dict[idx]
+                    while state_action_list:
+                        state, action = state_action_list.pop(0)
+                        final_move = (len(state_action_list) == 0) and done
+                        dqn.replay(idx, state, action, final_move)
 
 
 

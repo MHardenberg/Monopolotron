@@ -40,6 +40,8 @@ class DQNAgent():
         self.player_game_state = [torch.zeros(model_settings.state_size) \
                 for _ in range(players_cont)
 
+        self.state_action_dict: dict = {}
+
         for i, _ in enumerate(self.player_game_state):
             self.player_game_state[i].to(self.device)
 
@@ -64,16 +66,18 @@ class DQNAgent():
                 return self.policy_model(state).max(1).indices
         return random.randint(0, 1)  # may need ot be changed
 
-    def replay(player_idx: int, self, action: int, done: bool) -> None:
+    def replay(self, player_idx: int, state: torch.Tensor, action: int, done: bool) -> None:
         """ This function takes care of learning after action was taken. It is 
         supposed to be called at the end of a full round.
         """
-        state = self.player_game_state[player_idx]
         reward = self.__eval_reward(state)
         self.__store_experience(player_idx, state, action, reward, done)
 
         self.__update_epsilon()
         self.steps += 1
+
+    def clear_state_action_dict(self) -> None:
+        self.state_action_dict = {}
 
     def __update_model():
         print("Warning not implemented")

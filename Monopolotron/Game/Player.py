@@ -7,7 +7,7 @@ import random
 
 class Player:
     def __init__(self, game: Game, player_number: int,
-                 actor=RndActor,) -> None:
+                 actor=RndActor, **kwargs) -> None:
         """
         Initialize a new Player instance.
 
@@ -28,7 +28,13 @@ class Player:
 
         self.game: Game = game
         self.tile: dict = {}
-        self.actor = actor(player=self, game=self.game)
+
+        if 'dqn_model_instance' in kwargs:
+            dqn_model_instance = kwargs['dqn_model_instance']
+                self.actor = actor(player=self, game=self.game,
+                               dqn_model_instance=dqn_model_instance)
+        else:
+            self.actor = actor(player=self, game=self.game)
 
     def take_turn(self, ):
         """ If not jailed, roll, move and evaluate game tile. """
