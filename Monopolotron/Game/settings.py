@@ -5,7 +5,7 @@ board_height: int = board_width
 
 
 # starting settings
-player_funds: int = 15000
+player_funds: int = 1500
 money_over_go: int = 200
 names = ['Harold', "Gavin A'Laugh", 'Willy Wonka', 'Steve']
 

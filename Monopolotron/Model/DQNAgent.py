@@ -35,7 +35,7 @@ class DQNAgent():
         choice = random.random()
         if choice > self.epsilon:
             with torch.no_grad():
-                out = self.policy_model(torch.tensor(state, device=self.device)).max(0).indices.view(1)
+                out = self.policy_model(state).max(0).indices.view(1)
                 return out
         else:
             out = torch.tensor([random.randint(0, 1)], device=self.device)
