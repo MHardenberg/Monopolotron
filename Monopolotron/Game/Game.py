@@ -8,19 +8,29 @@ from Monopolotron.Game import utils
 import os
 import time
 
+from Monopolotron.Model.GameEncoder import GameEncoder
+
 
 class Game:
-    def __init__(self, humans: int = 0, cpu=0, rnd_cpu: int = 2) -> None:
+    def __init__(self, humans: int = 0, cpu=0, rnd_cpu: int = 2, dqn = None) -> None:
         self.turns_played: int = 0
         self.board_drawer = draw_board_ascii()
 
         # populate players
         players = humans + cpu + rnd_cpu
+        assigned_players = 0
         self.original_player_num: int = players
-        self.players: list = [Player(game=self, actor=HumanActor)
-                              for _ in range(humans)]
-        self.players += [Player(game=self, actor=NetActor) for _ in range(cpu)]
-        self.players += [Player(game=self, actor=RndActor) for _ in range(rnd_cpu)]
+        self.players: list = [Player(game=self,
+                                     player_number=assigned_players + i,
+                                     actor=HumanActor) for i in range(humans)]
+        assigned_players += humans
+        self.players += [Player(game=self,
+                                player_number=assigned_players + i,
+                                actor=NetActor, dqn=dqn) for i in range(cpu)]
+
+        self.players += [Player(game=self, player_number=assigned_players +i,
+                                actor=RndActor) for i in range(rnd_cpu)]
+
         self.bankrupt_players: list = []
 
         # set starting money and pow
@@ -45,6 +55,9 @@ class Game:
                 self.__play_turn()
                 self.turns_played += 1
 
+    def player_turn(self, idx: int):
+        self.players[idx].take_turn()
+
     def __play_turn(self,):
         for idx, p in enumerate(self.players):
             self.players[idx].take_turn()
@@ -52,7 +65,7 @@ class Game:
                 # remove bankrupt players
                 self.__rem_bankrupt_player(idx, p)
 
-    def __rem_bankrupt_player(self, bankrupt_players_idx, bankrupt_player):
+    def rem_bankrupt_player(self, bankrupt_players_idx, bankrupt_player):
         print(f'Player: {bankrupt_player.name} bankrupt!')
         self.bankrupt_players += [bankrupt_player,]
         # return player tiles to bank!
@@ -61,7 +74,7 @@ class Game:
 
         del self.players[bankrupt_players_idx]
 
-    def __visualise(self,):
+    def visualise(self,):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(self)
 

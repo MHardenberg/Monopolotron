@@ -6,7 +6,7 @@ import time
 if __name__ == "__main__":
     dqn = DQNAgent()
     for epoch in range(1, epochs):
-        game = Game(humans=0, cpu=2, rnd_cpu=0)
+        game = Game(humans=0, cpu=2, rnd_cpu=0, dqn=dqn)
         print(game)
         for idx, _ in enumerate(game.players):
             game.players[idx].game = game
@@ -15,3 +15,4 @@ if __name__ == "__main__":
                 game.visualise()
                 game.play_turn()
                 game.turns_played += 1
+

@@ -1,12 +1,14 @@
 from Monopolotron.Game import utils
 from Monopolotron.Game import settings
 from Monopolotron.Game import Game
+from Monopolotron.Game.Actors.NetActor import NetActor
 from Monopolotron.Game.Actors.RndActor import RndActor
 import random
 
 
 class Player:
-    def __init__(self, game: Game, actor=RndActor) -> None:
+    def __init__(self, game: Game, player_number: int,
+                 actor=RndActor, dqn=None) -> None:
         """
         Initialize a new Player instance.
 
@@ -27,11 +29,14 @@ class Player:
 
         self.game: Game = game
         self.tile: dict = {}
-        self.actor = actor(player=self, game=self.game)
+        if actor==NetActor:
+            self.actor = actor(player=self, game=self.game,
+                           dqn=dqn)
+        else:
+            self.actor = actor(player=self, game=self.game)
 
     def take_turn(self, ):
         """ If not jailed, roll, move and evaluate game tile. """
-        """ To add: add money when start passed"""
         if self.jailed:
             self.__handle_jail()
             return

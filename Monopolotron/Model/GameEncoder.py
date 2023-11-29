@@ -32,7 +32,7 @@ class GameEncoder:
             ]
             out[counter:counter+4] = to_add
             counter += 4
-            print(counter)
+            #print(counter)
 
         for p in game.players:
             to_add = [

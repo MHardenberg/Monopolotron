@@ -8,7 +8,7 @@ class RndActor:
         self.player: Player = player
         self.game: Game = game
 
-    def decide_build(self): 
+    def decide_build(self):
         """Handle buying building, always builds when enough money
         """
         price = self.player.tile.cost_hotel if self.player.tile.buildings == 4\
@@ -30,7 +30,7 @@ class RndActor:
             self.player.action += f'Property not bought. '
 
     def _owned_another_player(self) -> bool:
-        ''' For debugging, to assure players eventually 
+        ''' For debugging, to assure players eventually
         buy whole street and can build.
         '''
         for idx, player in enumerate(self.game.players):
@@ -38,7 +38,6 @@ class RndActor:
                     player.properties.keys():
                 return True
         return False
-
 
 
 

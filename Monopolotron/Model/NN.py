@@ -6,9 +6,9 @@ class NN(nn.Module):
     ''' Some basic NN, to be modified later.
     '''
 
-    def __init__(self, n_observations):
+    def __init__(self, state_size):
         super(NN, self).__init__()
-        self.layer1 = nn.Linear(n_observations, 128)
+        self.layer1 = nn.Linear(state_size, 128)
         self.layer2 = nn.Linear(128, 128)
         self.layer3 = nn.Linear(128, 2)
 

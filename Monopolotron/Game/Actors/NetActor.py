@@ -1,62 +1,59 @@
 from Monopolotron.Game import Game
 from Monopolotron.Game import Player
-from Monopolotron.Game.Actors.RndActor import RndActor
-from Monopolotron.Game import settings
+from Monopolotron.Model.DQNAgent import DQNAgent
 from Monopolotron.Model.GameEncoder import GameEncoder
-import numpy as np
+from Monopolotron.Model import DQNAgent
 
 
-class NetActor(RndActor):
-    def __init__(self, player: Player, game: Game):
-        super().__init__(player=player, game=game)
+class NetActor:
+    def __init__(self, player: Player, game: Game, dqn=None):
+        self.player: Player = player
+        self.game: Game = game
+        self.dqn=dqn
         self.encoder = GameEncoder()
 
-    def decide_build(self, player: Player):
-        """Handle buying buildings
+    def decide_build(self):
+        """Handle buying building, always builds when enough money
         """
-        print('Not implemented - acting as human')
-        price = player.tile.cost_hotel if player.tile.buildings == 4 \
-            else player.tile.cost_house
-        if player.money < price:
-            self.player.action += 'Property not bought.'
-            print(f'Player {self.player.name} cannot afford to build on this tile.')
-            return
-        decision = self.__get_model_out(settings.build_prompt)
-        if decision:
-            player.tile.buildings += 1
-            player.money -= price
-            player.action += \
-                f'Build! Currently {player.tile.buildings} on this property.'
-            return
-        self.player.action += 'Building not built.'
+        price = self.player.tile.cost_hotel if self.player.tile.buildings == 4\
+            else self.player.tile.cost_house
+        if self.player.money >= price:
+            self.player.tile.buildings += 1
+            self.player.money -= price
+            self.player.action += \
+                    f'Build! Currently {self.player.tile.buildings} on this property.'
 
     def decide_buy(self,):
         """Handle buying properties.
         """
-        print('Not implemented - acting as human')
-        if self.player.money < self.player.tile.cost:
-            self.player.action += 'Property not bought. '
-            print(f'Player {self.player.name} cannot afford to build on this tile.')
-            return
-        if self._owned_another_player():
-            return
-
-        decision = self.__get_model_out(settings.buy_prompt)
-        if decision:
+        encoded_state = self.encoder.encode_game(self.game, self.player)
+        buy = self.dqn.act(encoded_state)
+        if self.player.money >= self.player.tile.cost \
+                and buy == 1 and not self._owned_another_player():
             self.player.buy_property()
         else:
-            self.player.action += 'Property not bought.'
+            self.player.action += f'Property not bought. '
+        encoded_next_state = self.encoder.encode_game(self.game, self.player)
+        reward = self._reward()
+        self.dqn.memory.update(encoded_state, buy, reward, encoded_next_state, False)
 
-    def __get_model_out(self, prompt: str) -> bool:
-        print(self.__gather_inf())
-        while True:
-            ans = input(f'{prompt} [y/n]$ ')
-            try:
-                return {'y': True, 'n': False}[ans.lower()]
-            except KeyError:
-                print(f'Invalid input: {ans} - retry...')
+    def _reward(self) -> int:
+        '''
+        Implement actual reward function later
+        '''
+        return self.player.money + 500
 
-    def __gather_inf(self) -> str:
-        enc_game = self.encoder.encode_game(game=self.game, player=self.player)
-        print(enc_game)
-        return enc_game
+
+    def _owned_another_player(self) -> bool:
+        ''' For debugging, to assure players eventually
+        buy whole street and can build.
+        '''
+        for idx, player in enumerate(self.game.players):
+            if player != self.player and self.player.tile.street in \
+                    player.properties.keys():
+                return True
+        return False
+
+
+
+

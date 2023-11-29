@@ -15,10 +15,6 @@ class DQNAgent():
         self.policy_model = NN(settings.state_size)
         self.target_model = NN(settings.state_size)
         self.target_model.load_state_dict(self.policy_model.state_dict())
-        # Initialize target model with policy model's weights
-        self.target_update_counter = 0
-        # target model updated every x target_update steps,
-        # used to calculate Q-values, so it's more stable
 
         self.memory = ReplayMemory()
         self.optim = optim.AdamW(self.policy_model.parameters(),
@@ -37,20 +33,22 @@ class DQNAgent():
         choice = random.random()
         if choice > self.epsilon:
             with torch.no_grad():
-                return self.policy_model(state).max(1).indices
+                return self.policy_model(state).argmax()
         else:
             return random.randint(0, 1)  # may need ot be changed
 
-    def __replay(self):
+    def replay(self):
+        if len(self.memory) < settings.memory_size:
+            return
         batch = self.memory.sample()
         # can change to do whole batch at once later on
         for state, action, reward, next_state, done in batch:
-            state_action_values = []
+            state_action_values = 0
             if not done:
-                state_action_values = self.policy_model(state).max(1).value
+                state_action_values = self.policy_model(state).max()
 
             with torch.no_grad():
-                next_state_values = self.target_model(next_state).max(1).values
+                next_state_values = self.target_model(next_state).max()
 
             target = reward + settings.gamma * next_state_values
             criterion = nn.SmoothL1Loss()
