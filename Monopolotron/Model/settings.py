@@ -1,12 +1,12 @@
-memory_size = 1000
-epochs = 100
+memory_size = 2000
+epochs = 200
 epsilon_init = 1
 epsilon_min = 0.1
 epsilon_decay = 0.0001
 gamma = 0.9
-batch_size = 200
+batch_size = 256
 target_update = 10
-learning_rate = 0.001
+learning_rate = 0.0001
 state_size = 169
-
+tau = 0.005
 max_turns = 500

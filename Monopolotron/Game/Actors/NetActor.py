@@ -1,3 +1,5 @@
+import torch
+
 from Monopolotron.Game import Game
 from Monopolotron.Game import Player
 from Monopolotron.Model.DQNAgent import DQNAgent
@@ -29,13 +31,17 @@ class NetActor:
         encoded_state = self.encoder.encode_game(self.game, self.player)
         buy = self.dqn.act(encoded_state)
         if self.player.money >= self.player.tile.cost \
-                and buy == 1 and not self._owned_another_player():
+                and buy.item() == 1 and not self._owned_another_player():
             self.player.buy_property()
         else:
             self.player.action += f'Property not bought. '
         encoded_next_state = self.encoder.encode_game(self.game, self.player)
         reward = self._reward()
-        self.dqn.memory.update(encoded_state, buy, reward, encoded_next_state, False)
+        encoded_state = torch.tensor(encoded_state, device=self.dqn.device)
+        reward = torch.tensor(reward, device=self.dqn.device)
+        encoded_next_state = torch.tensor(encoded_next_state, device=self.dqn.device)
+        done = torch.tensor(0, device=self.dqn.device)
+        self.dqn.memory.update(encoded_state, buy, reward, encoded_next_state, done)
 
     def _reward(self) -> int:
         '''

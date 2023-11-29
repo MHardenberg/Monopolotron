@@ -89,13 +89,13 @@ class Player:
 
     # Private methods
     def __be_jailed(self, ):
-        print(f"{self.name} jailed!")
+        #print(f"{self.name} jailed!")
         self.status = f'Status: jailed for {self.jailed_for_turns}'
         self.position = settings.JAIL_POSITION
         self.jailed = True
 
     def __be_unjailed(self, ):
-        print(f"{self.name} unjailed!")
+        #print(f"{self.name} unjailed!")
         self.status = f'Status: On tile {self.position} recently unjailed'
         self.jailed = False
         self.jailed_for_turns = 0

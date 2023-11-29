@@ -58,6 +58,9 @@ class Game:
     def player_turn(self, idx: int):
         self.players[idx].take_turn()
 
+    def rem_bankrupt_player(self, bankrupt_players_idx):
+        del self.players[bankrupt_players_idx]
+
     def __play_turn(self,):
         for idx, p in enumerate(self.players):
             self.players[idx].take_turn()
@@ -65,7 +68,7 @@ class Game:
                 # remove bankrupt players
                 self.__rem_bankrupt_player(idx, p)
 
-    def rem_bankrupt_player(self, bankrupt_players_idx, bankrupt_player):
+    def __rem_bankrupt_player(self, bankrupt_players_idx, bankrupt_player):
         print(f'Player: {bankrupt_player.name} bankrupt!')
         self.bankrupt_players += [bankrupt_player,]
         # return player tiles to bank!

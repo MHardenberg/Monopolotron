@@ -1,6 +1,9 @@
 import random
 from collections import namedtuple
 from collections import deque
+
+import torch
+
 from Monopolotron.Model.settings import *
 
 class ReplayMemory:
@@ -11,7 +14,7 @@ class ReplayMemory:
         self.memory.append([state, action, reward, next_state, done])
 
     def done(self):
-        self.memory[-1][-1] = True
+        self.memory[-1][-1] = torch.tensor(1, device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
 
     def sample(self):
         return random.sample(self.memory, batch_size)
