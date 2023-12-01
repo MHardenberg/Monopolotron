@@ -17,6 +17,13 @@ class GameEncoder:
             'utilities': 10
             }
 
+        self.code_pos_dict: dict = {
+                'tile_no': [i*4 for i in range(40)],
+                'street_enc': [i*4 + 1 for i in range(40)],
+                'owned': [i*4 + 2 for i in range(40)],
+                'buildings': [i*4 + 3 for i in range(40)],
+                }
+
     def encode_game(self, game, player):
         board = game.board
         out = np.zeros(161 + 2*4)

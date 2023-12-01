@@ -22,7 +22,6 @@ class Player:
         self.jailed: bool = False
         self.jailed_for_turns: int = 0
         self.properties: dict = {}
-        self.net_worth: int = 0
 
         self.position: int = 0
         self.status: str = ''
