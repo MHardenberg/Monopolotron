@@ -21,11 +21,11 @@ class Rewarder:
             return money * money_mult
 
         owned_buildings =\
-            self.__find_buildings_on_owned_streets(state, owned_streets).unsqueeze(dim=0)
+            self.__find_buildings_on_owned_streets(state, owned_streets)
         print(f'Streets shape {owned_streets.shape}')
         print(owned_buildings.shape)
         assets_values = money*money_mult +\
-            sum([self.__find_tile_val(prop_num, houses_build) for
+            sum([self.__find_tile_val(int(prop_num), int(houses_build)) for
                 prop_num, houses_build in
                 zip(owned_streets, owned_buildings)])
 
@@ -61,6 +61,9 @@ class Rewarder:
         house_mult = settings.reward_multipliers['house']
 
         tile = self.board[int(prop_num)]
+        if tile.cost_house is None:
+            return tile.cost
+
         return street_mult * tile.cost \
             + (min(4, houses_build) * tile.cost_house
                 + int(houses_build == 5) * tile.cost_hotel) * house_mult
