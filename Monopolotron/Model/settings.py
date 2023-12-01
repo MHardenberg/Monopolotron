@@ -10,3 +10,11 @@ learning_rate = 0.0001
 state_size = 169
 tau = 0.005
 max_turns = 500
+
+
+# Reward
+reward_multipliers: dict = {
+        'street': 1.1,
+        'house': 1.2,
+        'money': 1.
+        }
