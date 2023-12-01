@@ -19,10 +19,7 @@ class HumanActor(RndActor):
             return
         decision = self.__get_input(settings.build_prompt)
         if decision:
-            player.tile.buildings += 1
-            player.money -= price
-            player.action += \
-                f'Build! Currently {player.tile.buildings} on this property.'
+            self.player.build()
             return
         self.player.action += 'Building not built.'
 

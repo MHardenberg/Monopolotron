@@ -14,10 +14,7 @@ class RndActor:
         price = self.player.tile.cost_hotel if self.player.tile.buildings == 4\
             else self.player.tile.cost_house
         if self.player.money >= price:
-            self.player.tile.buildings += 1
-            self.player.money -= price
-            self.player.action += \
-                    f'Build! Currently {self.player.tile.buildings} on this property.'
+            self.player.build()
 
     def decide_buy(self,):
         """Handle buying properties.

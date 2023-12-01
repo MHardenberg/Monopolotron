@@ -70,6 +70,13 @@ class Player:
             self.properties[street].append(self.tile)
         self.action += f'Bought property for {cost}. '
 
+    def build(self):
+        self.tile.buildings += 1
+        self.money -= self.tile.cost_hotel if self.tile.buildings == 4\
+            else self.tile.cost_house
+        self.action += \
+            f'Build! Currently {self.tile.buildings} on this property.'
+
     def calculate_properties(self) -> int:
         try:
             return len(self.properties[self.tile.street])
@@ -205,9 +212,10 @@ class Player:
         Parameters:
         - rent: The amount of rent to pay.
         """
+        for idx, player in enumerate(self.game.players):
+            if player.name == self.tile.owner:
+                break
 
-        idx = next(idx for idx, player in enumerate(self.game.players) \
-                   if player.name == self.tile.owner)
         self.game.players[idx].money += rent
         self.money -= rent
         self.action += f'Payed {rent} rent. '

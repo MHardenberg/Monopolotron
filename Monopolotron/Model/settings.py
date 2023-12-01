@@ -1,5 +1,5 @@
 memory_size = 2000
-epochs = 200
+epochs = 10
 epsilon_init = 1
 epsilon_min = 0.1
 epsilon_decay = 0.0001

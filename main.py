@@ -5,9 +5,9 @@ from tqdm import tqdm
 
 if __name__ == "__main__":
     dqn = DQNAgent()
-    results = [0, 0, 0]
+    results = [0, 0, 0, 0, 0]
     for epoch in tqdm(range(epochs)):
-        game = Game(humans=0, cpu=1, rnd_cpu=1, dqn=dqn)
+        game = Game(humans=0, cpu=1, rnd_cpu=3, dqn=dqn)
         for idx, _ in enumerate(game.players):
             game.players[idx].game = game
 
@@ -18,6 +18,7 @@ if __name__ == "__main__":
                 if game.players[idx].money <= 0:
                     dqn.memory.done()
                     results[idx] += 1
+                    # this doesn't work 
                     game.rem_bankrupt_player(idx)
                     break
             game.turns_played += 1
@@ -25,7 +26,7 @@ if __name__ == "__main__":
             if game.turns_played == max_turns-1:
                 results[2] += 1
 
-    print(f'DQN win rate: {results[1] / epochs}\n'
+    print(f'DQN win rate: {sum([results[x] for x in range(1, game.original_player_num)]) / (epochs*(game.original_player_num-1))}\n'
           f'Random win rate: {results[0] / epochs}\n'
-          f'Tie rate: {results[2]/epochs}')
+          f'Tie rate: {results[-1]/epochs}')
     print(results)
