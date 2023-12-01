@@ -28,6 +28,7 @@ train_model(visualise: bool=False, sleep_ms: float=0):
                         state, action = state_action_list.pop(0)
                         final_move = (len(state_action_list) == 0) and done
                         dqn.replay(idx, state, action, final_move)
+                        dqn.clear_state_action_dict()
 
 
 
