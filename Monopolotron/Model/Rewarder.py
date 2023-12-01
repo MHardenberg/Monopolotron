@@ -23,14 +23,11 @@ class Rewarder:
         # if we don't own any streets, we just hand the asset values as a tuple
         # to the __reward_from_asset_change method.
         if not owned_streets.nelement():
-            print("Returned", owned_streets)
             assets = (money, 0, 0)
             return self.__reward_from_asset_change(player_idx, assets)
 
         owned_buildings =\
             self.__find_buildings_on_owned_streets(state, owned_streets)
-        print(f'Streets shape {owned_streets.shape}')
-        print(owned_buildings.shape)
 
         assets = money, \
             sum([
@@ -70,11 +67,9 @@ class Rewarder:
                                           owned_streets: torch.Tensor) -> torch.Tensor:
         """ Returns tensors of numbers of buildings on owned streets """
         if not owned_streets.nelement():
-            print("not owned street")
             return torch.zeros_like(owned_streets)
 
         street_buildings_code_pos = self.encoder.code_pos_dict['buildings']
-        print(f'Buildings {state[street_buildings_code_pos][owned_streets]}')
         return state[street_buildings_code_pos][owned_streets]
 
     def __find_tile_val(self, prop_num: int) -> int:

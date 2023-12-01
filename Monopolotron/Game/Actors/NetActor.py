@@ -27,27 +27,32 @@ class NetActor:
             self.player.action += \
                     f'Build! Currently {self.player.tile.buildings} on this property.'
 
+
+
     def decide_buy(self,):
         """Handle buying properties.
         """
-        encoded_state = self.encoder.encode_game(self.game, self.player)
-        buy = self.dqn.act(encoded_state)
-        if self.player.money >= self.player.tile.cost \
-                and buy.item() == 1 and not self._owned_another_player():
-            self.player.buy_property()
+        encoded_state = self.encoder.encode_game(self.game, self.player).to(self.dqn.device)
+        if self.player.money < self.player.tile.cost:
+            self.player.action += f'Property not bought. Not enough money.'
+            return
         else:
-            self.player.action += f'Property not bought. '
-        encoded_next_state = self.encoder.encode_game(self.game, self.player)
-        reward = self._reward(encoded_state)
-        encoded_state = torch.tensor(encoded_state, device=self.dqn.device)
+            buy = self.dqn.act(encoded_state)
+            if buy.item() == 1:
+                self.player.buy_property()
+            else:
+                self.player.action += f'Property not bought. DQN decided.'
+
+        encoded_next_state = self.encoder.encode_game(self.game, self.player).to(self.dqn.device)
+        reward = self._reward(encoded_next_state)
+        self.player.action += f'Reward for this action: {reward}. '
         reward = torch.tensor(reward, device=self.dqn.device)
-        encoded_next_state = torch.tensor(encoded_next_state, device=self.dqn.device)
         done = torch.tensor(0, device=self.dqn.device)
         self.dqn.memory.update(encoded_state, buy, reward, encoded_next_state, done)
 
     def _reward(self, encoded_state) -> int:
-        print(self.rewarder.reward(self.player.player_number, encoded_state))
-        return self.rewarder.reward(self.player.player_number, encoded_state)
+        reward = self.rewarder.reward(self.player.player_number, encoded_state)
+        return reward
 
 
     def _owned_another_player(self) -> bool:

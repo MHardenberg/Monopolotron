@@ -12,7 +12,7 @@ if __name__ == "__main__":
             game.players[idx].game = game
 
         while len(game.players) > 1 and game.turns_played < max_turns:
-            game.visualise()
+            #game.visualise()
             for idx, _ in enumerate(game.players):
                 game.player_turn(idx)
                 if game.players[idx].money <= 0:
