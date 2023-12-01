@@ -17,7 +17,7 @@ class Player:
         - actor: An actor instance responsible for decision-making.
         """
         self.name: str = ''
-
+        self.player_number: int = player_number
         self.money: int = 0
         self.jailed: bool = False
         self.jailed_for_turns: int = 0

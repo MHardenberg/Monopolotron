@@ -5,6 +5,7 @@ from Monopolotron.Game import Player
 from Monopolotron.Model.DQNAgent import DQNAgent
 from Monopolotron.Model.GameEncoder import GameEncoder
 from Monopolotron.Model import DQNAgent
+from Monopolotron.Model.Rewarder import Rewarder
 
 
 class NetActor:
@@ -13,6 +14,7 @@ class NetActor:
         self.game: Game = game
         self.dqn=dqn
         self.encoder = GameEncoder()
+        self.rewarder = Rewarder()
 
     def decide_build(self):
         """Handle buying building, always builds when enough money
@@ -36,18 +38,16 @@ class NetActor:
         else:
             self.player.action += f'Property not bought. '
         encoded_next_state = self.encoder.encode_game(self.game, self.player)
-        reward = self._reward()
+        reward = self._reward(encoded_state)
         encoded_state = torch.tensor(encoded_state, device=self.dqn.device)
         reward = torch.tensor(reward, device=self.dqn.device)
         encoded_next_state = torch.tensor(encoded_next_state, device=self.dqn.device)
         done = torch.tensor(0, device=self.dqn.device)
         self.dqn.memory.update(encoded_state, buy, reward, encoded_next_state, done)
 
-    def _reward(self) -> int:
-        '''
-        Implement actual reward function later
-        '''
-        return self.player.money + 500
+    def _reward(self, encoded_state) -> int:
+        print(self.rewarder.reward(self.player.player_number, encoded_state))
+        return self.rewarder.reward(self.player.player_number, encoded_state)
 
 
     def _owned_another_player(self) -> bool:
