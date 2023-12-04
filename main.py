@@ -6,7 +6,6 @@ import numpy as np
 if __name__ == "__main__":
     dqn = DQNAgent()
     hist = train_dqn(dqn, 1000)
-    chunk_size = 10
-    for chunk in np.array_split(hist, chunk_size):
+    chunks = 10
+    for chunk in np.array_split(hist, chunks):
         print(f'Success number: {np.mean(chunk)}')
-
