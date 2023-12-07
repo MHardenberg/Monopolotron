@@ -46,14 +46,14 @@ class Rewarder:
         money_mult = model_settings.reward_multipliers['money']
         street_mult = model_settings.reward_multipliers['street']
         house_mult = model_settings.reward_multipliers['house']
+        loss_multiplier = model_settings.reward_multipliers['loss']
 
         net_worth = money_mult*money + street_mult*streets_value\
             + house_mult*buildings_value
 
-        change_in_networth = net_worth - self.player_hist[player_idx]
         self.__update_player_hist(player_idx, net_worth)
-
-        return change_in_networth
+        return net_worth - loss_multiplier * int(money <= 0)  
+                # old metric: change_in_networth
 
     def __update_player_hist(self, player_idx, net_worth) -> None:
         self.player_hist[player_idx] = net_worth

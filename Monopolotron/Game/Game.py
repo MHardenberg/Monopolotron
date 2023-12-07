@@ -8,11 +8,13 @@ from Monopolotron.Game import utils
 import os
 import time
 
-from Monopolotron.Model.GameEncoder import GameEncoder
-
 
 class Game:
-    def __init__(self, humans: int = 0, cpu=0, rnd_cpu: int = 2, dqn = None) -> None:
+    def __init__(self, humans: int = 0, cpu=0, rnd_cpu: int = 2,
+                 dqn = None) -> None:
+        self.humans, self.cpu, self.rnd_cpu, self.dqn = humans, cpu, rnd_cpu,\
+                dqn
+
         self.turns_played: int = 0
         self.board_drawer = draw_board_ascii()
 
@@ -60,6 +62,9 @@ class Game:
 
     def rem_bankrupt_player(self, bankrupt_players_idx):
         del self.players[bankrupt_players_idx]
+
+    def reset(self):
+        self.__init__(self.humans, self.cpu, self.rnd_cpu, self.dqn)
 
     def __play_turn(self,):
         for idx, p in enumerate(self.players):

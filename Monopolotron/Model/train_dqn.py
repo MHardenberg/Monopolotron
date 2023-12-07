@@ -21,10 +21,14 @@ def train_dqn(dqn: DQNAgent, epochs: int, validation_interval: int = None,
     game_history = []
     win_outcome, tie_outcome, loss_outcome = 1, 0, -1
 
+    game = Game(humans=0, cpu=cpu_opponents + 1,
+                rnd_cpu=rnd_opponents, dqn=dqn)
+
     for epoch in tqdm(range(epochs)):
+        # avoid gc by resetting game
+        game.reset()
+
         game_history += [win_outcome]
-        game = Game(humans=0, cpu=cpu_opponents + 1,
-                    rnd_cpu=rnd_opponents, dqn=dqn)
         for idx, _ in enumerate(game.players):
             game.players[idx].game = game
 
@@ -46,6 +50,7 @@ def train_dqn(dqn: DQNAgent, epochs: int, validation_interval: int = None,
                     game.rem_bankrupt_player(idx)
             game.turns_played += 1
             dqn.replay()
+            dqn.update_target()
 
             if game.turns_played == max_turns-1:
                 net_ties += 1
