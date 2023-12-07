@@ -8,7 +8,7 @@ target_update = 10
 learning_rate = 0.01
 state_size = 169
 tau = 0.005
-max_turns = 50
+max_turns = 100
 
 
 # Reward
