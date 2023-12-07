@@ -6,10 +6,11 @@ import Monopolotron.Game.settings as game_settings
 
 
 class Rewarder:
-    def __init__(self):
+    def __init__(self, game):
         self.board: dict = utils.load_board()
         self.encoder = GameEncoder()
         self.player_hist: dict = {}  # dict of past asset values
+        self.game = game
 
     def reward(self, player_idx: int, state: torch.Tensor) -> int:
         if player_idx not in self.player_hist:
@@ -38,7 +39,18 @@ class Rewarder:
                                                   int(buildings)) for
                     prop_num, buildings in zip(owned_streets, owned_buildings)
                     ])
-        return self.__reward_from_asset_change(player_idx, assets)
+
+
+        loss_multiplier = model_settings.reward_multipliers['loss']
+        win_multiplier = model_settings.reward_multipliers['win']
+        has_lost = money <= 0
+        has_won = money > 0 and len(self.game.players) == 1
+
+        reward = self.__reward_from_asset_change(player_idx, assets) - \
+            loss_multiplier * int(has_lost) + \
+            win_multiplier * int(has_won)
+
+        return reward
 
     def __reward_from_asset_change(self, player_idx, current_assets) -> float:
         money, streets_value, buildings_value = current_assets
@@ -46,13 +58,12 @@ class Rewarder:
         money_mult = model_settings.reward_multipliers['money']
         street_mult = model_settings.reward_multipliers['street']
         house_mult = model_settings.reward_multipliers['house']
-        loss_multiplier = model_settings.reward_multipliers['loss']
 
         net_worth = money_mult*money + street_mult*streets_value\
             + house_mult*buildings_value
 
         self.__update_player_hist(player_idx, net_worth)
-        return net_worth - loss_multiplier * int(money <= 0)  
+        return net_worth
                 # old metric: change_in_networth
 
     def __update_player_hist(self, player_idx, net_worth) -> None:

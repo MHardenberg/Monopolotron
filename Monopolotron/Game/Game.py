@@ -45,7 +45,7 @@ class Game:
         self.board: dict = utils.load_board()
         self.neighbourhoods: dict = utils.sum_neighbourhoods(self.board)
 
-    def play(self, visualise=False, max_turns=200, speed_factor=1):
+    def play(self, visualise=False, max_turns=100, speed_factor=1):
         """ Start game loop until but one players are bankrupt or max turns
         are reached.
         """
@@ -64,6 +64,8 @@ class Game:
         del self.players[bankrupt_players_idx]
 
     def reset(self):
+        for p in self.players:
+            del p
         self.__init__(self.humans, self.cpu, self.rnd_cpu, self.dqn)
 
     def __play_turn(self,):

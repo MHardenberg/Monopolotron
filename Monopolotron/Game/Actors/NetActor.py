@@ -12,7 +12,7 @@ class NetActor:
         self.game: Game = game
         self.dqn = dqn
         self.encoder = GameEncoder()
-        self.rewarder = Rewarder()
+        self.rewarder = Rewarder(self.game)
 
     def decide_build(self):
         """Handle buying building, always builds when enough money
