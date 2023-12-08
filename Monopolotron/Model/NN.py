@@ -11,7 +11,7 @@ class NN(nn.Module):
         self.layer1 = nn.Linear(state_size, 256)
         self.layer2 = nn.Linear(256, 256)
         self.layer3 = nn.Linear(256, 256)
-        self.layer4 = nn.Linear(256, 2)
+        self.layer4 = nn.Linear(256, 1)
 
     def forward(self, x):
         x = F.relu(self.layer1(x))

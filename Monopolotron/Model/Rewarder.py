@@ -39,16 +39,16 @@ class Rewarder:
                                                   int(buildings)) for
                     prop_num, buildings in zip(owned_streets, owned_buildings)
                     ])
-
-
+        """
         loss_multiplier = model_settings.reward_multipliers['loss']
         win_multiplier = model_settings.reward_multipliers['win']
         has_lost = money <= 0
         has_won = money > 0 and len(self.game.players) == 1
+        """
 
-        reward = self.__reward_from_asset_change(player_idx, assets) - \
-            loss_multiplier * int(has_lost) + \
-            win_multiplier * int(has_won)
+        reward = self.__reward_from_asset_change(player_idx, assets)  # - \
+        # loss_multiplier * int(has_lost) + \
+        # win_multiplier * int(has_won)
 
         return reward
 
@@ -62,9 +62,9 @@ class Rewarder:
         net_worth = money_mult*money + street_mult*streets_value\
             + house_mult*buildings_value
 
+        change_in_networth = net_worth - self.player_hist[player_idx]
         self.__update_player_hist(player_idx, net_worth)
-        return net_worth
-                # old metric: change_in_networth
+        return change_in_networth
 
     def __update_player_hist(self, player_idx, net_worth) -> None:
         self.player_hist[player_idx] = net_worth

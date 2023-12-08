@@ -59,7 +59,7 @@ class DQNAgent():
         done_batch = torch.stack(batch[4])
 
         state_action_values = self.policy_model(state_batch)\
-            .gather(1, action_batch)
+            .gather(0, action_batch)
 
         with torch.no_grad():
             future_rewards = self.target_model(next_state_batch).max(1).values
