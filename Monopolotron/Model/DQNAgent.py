@@ -11,7 +11,7 @@ import Monopolotron.Model.settings as settings
 
 
 class DQNAgent():
-    def __init__(self):
+    def __init__(self, eps: float = None):
         self.device = torch.device("cuda" if torch.cuda.is_available()
                                    else "cpu")
         self.policy_model = NN(settings.state_size).to(self.device)
@@ -22,7 +22,11 @@ class DQNAgent():
         self.optim = optim.AdamW(self.policy_model.parameters(),
                                  lr=settings.learning_rate, amsgrad=True)
         self.criterion = nn.SmoothL1Loss()
-        self.epsilon = settings.epsilon_init
+        if not eps:
+            self.epsilon = settings.epsilon_init
+        else:
+            self.epsilon = eps
+
         self.steps = 0
 
     def __update_epsilon(self):

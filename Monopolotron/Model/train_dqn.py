@@ -1,6 +1,7 @@
 from Monopolotron.Game.Game import Game
 from Monopolotron.Model.DQNAgent import DQNAgent
 from Monopolotron.Model.settings import max_turns
+import Monopolotron.Model.utils as utils
 from tqdm import tqdm
 
 
@@ -46,13 +47,21 @@ def train_dqn(dqn: DQNAgent, epochs: int, validation_interval: int = None,
                     game.rem_bankrupt_player(idx)
             game.turns_played += 1
             dqn.replay()
+            dqn.update_target()
 
             if game.turns_played == max_turns-1:
                 net_ties += 1
                 game_history[-1] = tie_outcome
 
+        if not (100 * epoch / epochs) % 5:
+            utils.save_game_stats(game, epoch, 'game_states.json')
+
     print(f'DQN win rate: {(epoch - net_losses - net_ties) / epoch}\n'
           f'Tie rate: {net_ties/epoch}',
           f'Results: {game_history}')
     return game_history
+
+
+
+
 

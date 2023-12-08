@@ -13,7 +13,7 @@ max_turns = 500
 
 # Reward
 reward_multipliers: dict = {
-        'street': 1.1,
-        'house': 1.2,
+        'street': 10.,
+        'house': 20.,
         'money': 1.
         }
