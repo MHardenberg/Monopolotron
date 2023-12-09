@@ -1,11 +1,11 @@
-memory_size = 2000
+memory_size = 5000
 epsilon_init = 1
-epsilon_min = 0.1
+epsilon_min = 0.01
 epsilon_decay = 0.0001
 gamma = 0.9
 batch_size = 256
 target_update = 10
-learning_rate = 0.0001
+learning_rate = 0.00001
 state_size = 169
 tau = 0.005
 max_turns = 500

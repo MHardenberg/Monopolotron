@@ -53,8 +53,7 @@ def train_dqn(dqn: DQNAgent, epochs: int, validation_interval: int = None,
                 net_ties += 1
                 game_history[-1] = tie_outcome
 
-        if not (100 * epoch / epochs) % 5:
-            utils.save_game_stats(game, epoch, 'game_states.json')
+        utils.save_game_stats(game, epoch, 'game_states.json')
 
     print(f'DQN win rate: {(epoch - net_losses - net_ties) / epoch}\n'
           f'Tie rate: {net_ties/epoch}',
