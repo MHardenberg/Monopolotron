@@ -38,7 +38,15 @@ class Rewarder:
                                                   int(buildings)) for
                     prop_num, buildings in zip(owned_streets, owned_buildings)
                     ])
-        return self.__reward_from_asset_change(player_idx, assets)
+
+        outcome_reward = 0
+        if self.__check_loss(player_idx, state):
+            outcome_reward = model_settings.reward_multipliers['defeat']
+        elif self.__check_win(player_idx, state):
+            outcome_reward = model_settings.reward_multipliers['victory']
+
+        return outcome_reward +\
+                self.__reward_from_asset_change(player_idx, assets)
 
     def __reward_from_asset_change(self, player_idx, current_assets) -> float:
         money, streets_value, buildings_value = current_assets
@@ -83,3 +91,15 @@ class Rewarder:
 
         return (min(4, houses_build) * tile.cost_house
                 + int(houses_build == 5) * tile.cost_hotel)
+
+
+    def __check_win(self, player_idx: int, state: torch.Tensor):
+        money_pos = self.encoder.code_pos_dict['money'].copy()
+        own_money_pos = money_pos.pop(player_idx)
+        return all(state[p] <= 0 for p in money_pos)
+
+
+    def __check_loss(self, player_idx: int, state: torch.Tensor):
+        money_pos = self.encoder.code_pos_dict['money'][player_idx]
+        return (state[money_pos] <= 0)
+        

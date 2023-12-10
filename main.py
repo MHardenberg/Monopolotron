@@ -16,7 +16,7 @@ if __name__ == "__main__":
         eps = None
 
     dqn = DQNAgent(eps=eps)
-    epochs = 2500
+    epochs = 500
 
     try:
         dqn.policy_model.load_state_dict(torch.load('p_model_state.pt'))

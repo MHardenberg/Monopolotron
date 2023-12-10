@@ -22,6 +22,7 @@ class GameEncoder:
                 'street_enc': [i*4 + 1 for i in range(40)],
                 'owned': [i*4 + 2 for i in range(40)],
                 'buildings': [i*4 + 3 for i in range(40)],
+                'money': [162 + 2*i for i in range(4)]
                 }
 
     def encode_game(self, game, player):
