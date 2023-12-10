@@ -3,7 +3,7 @@ import torch.nn.functional as F
 
 
 class NN(nn.Module):
-    ''' Some basic NN, to be modified later.
+    ''' NN for both target and policy model
     '''
 
     def __init__(self, state_size):
@@ -19,4 +19,3 @@ class NN(nn.Module):
         x = F.relu(self.layer3(x))
         x = self.layer_out(x)
         return x
-        x = F.relu(self.layer2(x))

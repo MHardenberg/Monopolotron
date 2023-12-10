@@ -4,9 +4,10 @@ import random
 
 
 class RndActor:
-    def __init__(self, player: Player, game: Game):
+    def __init__(self, player: Player, game: Game, toddler=False):
         self.player: Player = player
         self.game: Game = game
+        self.toddler = toddler
 
     def decide_build(self):
         """Handle buying building, always builds when enough money
@@ -21,7 +22,8 @@ class RndActor:
         """
         buy = random.choice([True, False])
         if self.player.money >= self.player.tile.cost \
-                and buy and not self._owned_another_player():
+                and buy and not \
+                (self._owned_another_player() and self.toddler):
             self.player.buy_property()
         else:
             self.player.action += f'Property not bought. '

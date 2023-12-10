@@ -3,6 +3,7 @@ import Monopolotron.Game.utils as utils
 from Monopolotron.Model.GameEncoder import GameEncoder
 import Monopolotron.Model.settings as model_settings
 import Monopolotron.Game.settings as game_settings
+import csv
 
 
 class Rewarder:
@@ -10,6 +11,7 @@ class Rewarder:
         self.board: dict = utils.load_board()
         self.encoder = GameEncoder()
         self.player_hist: dict = {}  # dict of past asset values
+        self.total_reward = {}
 
     def reward(self, player_idx: int, state: torch.Tensor) -> int:
         if player_idx not in self.player_hist:
@@ -45,8 +47,20 @@ class Rewarder:
         elif self.__check_win(player_idx, state):
             outcome_reward = model_settings.reward_multipliers['victory']
 
-        return outcome_reward +\
+        reward = outcome_reward +\
                 self.__reward_from_asset_change(player_idx, assets)
+        try:
+            self.total_reward[player_idx] += reward
+        except KeyError:
+            self.total_reward[player_idx] = reward
+
+        return reward
+
+    def save_total(self):
+        with open('stats/reward.csv', 'a') as f:
+            write = csv.writer(f)
+            out = [self.total_reward[key] for key in self.total_reward]
+            write.writerow(out)
 
     def __reward_from_asset_change(self, player_idx, current_assets) -> float:
         money, streets_value, buildings_value = current_assets
@@ -92,14 +106,11 @@ class Rewarder:
         return (min(4, houses_build) * tile.cost_house
                 + int(houses_build == 5) * tile.cost_hotel)
 
-
     def __check_win(self, player_idx: int, state: torch.Tensor):
         money_pos = self.encoder.code_pos_dict['money'].copy()
         own_money_pos = money_pos.pop(player_idx)
         return all(state[p] <= 0 for p in money_pos)
 
-
     def __check_loss(self, player_idx: int, state: torch.Tensor):
         money_pos = self.encoder.code_pos_dict['money'][player_idx]
         return (state[money_pos] <= 0)
-        

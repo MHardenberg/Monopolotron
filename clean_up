@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "Removing previous stats and model weights.."
+rm stats/*
+rm model_weights/*

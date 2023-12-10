@@ -2,11 +2,12 @@ from Monopolotron.Game.Game import Game
 from Monopolotron.Model.DQNAgent import DQNAgent
 from Monopolotron.Model.settings import max_turns
 import Monopolotron.Model.utils as utils
+import Monopolotron.Model.settings as settings
 from tqdm import tqdm
 
 
 def train_dqn(dqn: DQNAgent, epochs: int, validation_interval: int = None,
-              opponents: dict = {'cpu': 0, 'rnd_cpu': 3}, visualise=False):
+              opponents: dict = {'cpu': 0, 'rnd_cpu': 1}, visualise=False):
     try:
         cpu_opponents = opponents['cpu']
     except KeyError:
@@ -43,21 +44,24 @@ def train_dqn(dqn: DQNAgent, epochs: int, validation_interval: int = None,
                         net_losses += 1
                         game_history[-1] = loss_outcome
                         done = True
+                        break
 
                     game.rem_bankrupt_player(idx)
             game.turns_played += 1
             dqn.replay()
+
+            # we only update every game
             dqn.update_target()
 
             if game.turns_played == max_turns-1:
                 net_ties += 1
                 game_history[-1] = tie_outcome
 
-        utils.save_game_stats(game, epoch, 'game_states.json')
+        game.players[0].actor.rewarder.save_total()
+        utils.save_game_stats(game, epoch, 'stats/game_states.json')
 
     print(f'DQN win rate: {(epoch - net_losses - net_ties) / epoch}\n'
-          f'Tie rate: {net_ties/epoch}',
-          f'Results: {game_history}')
+          f'Tie rate: {net_ties/epoch}')
     return game_history
 
 

@@ -2,7 +2,7 @@ import math
 import torch
 import torch.optim as optim
 import random
-
+import csv
 from torch import nn, Tensor
 
 from Monopolotron.Model.NN import NN
@@ -21,7 +21,7 @@ class DQNAgent():
         self.memory = ReplayMemory()
         self.optim = optim.AdamW(self.policy_model.parameters(),
                                  lr=settings.learning_rate, amsgrad=True)
-        self.criterion = nn.SmoothL1Loss()
+        self.criterion = nn.HuberLoss()
         if not eps:
             self.epsilon = settings.epsilon_init
         else:
@@ -45,7 +45,7 @@ class DQNAgent():
                 return out
         else:
             out = torch.tensor([random.randint(0, 1)], device=self.device)
-            return out
+        return out
 
     def replay(self):
         if len(self.memory) < settings.memory_size:
@@ -68,7 +68,6 @@ class DQNAgent():
                                      * (1-done_batch))
 
         loss = self.criterion(state_action_values, expected_Q.unsqueeze(1))
-
         self.optim.zero_grad()
         loss.backward()
 
